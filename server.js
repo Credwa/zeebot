@@ -25,7 +25,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // })
 
 app.get('/', (req, res) => {
-  res.redirect('https://' + req.headers.host + req.url);
+  if (req.secure) {
+    // request was via https, so do no special handling
+    next();
+  } else {
+    // request was via http, so redirect to https
+    res.redirect(`https://' ${req.headers.host} ${req.url}`);
+  }
   app.use(express.static(`${__dirname}/dist/pwa-ios/`));
   app.use(express.static(`${__dirname}./`));
   app.use(express.static(`${__dirname}/`));
