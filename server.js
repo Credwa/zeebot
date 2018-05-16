@@ -25,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // })
 
 app.get('/', (req, res) => {
+  res.redirect('https://' + req.headers.host + req.url);
   app.use(express.static(`${__dirname}/dist/pwa-ios/`));
   app.use(express.static(`${__dirname}./`));
   app.use(express.static(`${__dirname}/`));
