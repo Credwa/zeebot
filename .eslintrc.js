@@ -34,6 +34,8 @@ module.exports = {
     "max-len": 0,
     "no-unused-vars": 1,
     "no-empty": 1,
+    "new-cap": 0,
+    "no-plusplus": 0,
     camelcase: 0,
     eqeqeq: 0,
     "no-tabs": 0,

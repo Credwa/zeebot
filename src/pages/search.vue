@@ -7,12 +7,12 @@
       </div>
     </div>
     <transition appear enter-active-class="animated slideInUp">
-      <q-scroll-area style="" class="messaging items-center column justify-start">
+      <q-scroll-area ref="chatArea" style="" class="messaging items-center column justify-start">
         <div v-if="!searching && !result && !listening" class="zeebot flex column items-center">
           <img  alt="ZeeBot" src="~assets/zeebot-init.svg">
           <div class="assist">Hello! How Can I help you?</div>
         </div>
-        <div v-if="listening" class="zeebot flex column items-center">
+        <div v-if="listening && !result" class="zeebot flex column items-center">
           <img  alt="ZeeBot" src="~assets/zeebot-listening.svg" style="margin-left:65px">
           <div class="assist flex column " style="margin-left:55px">Listening
             <div class="loader"><span class="loader__dot pulse pulse__one"></span><span class="loader__dot pulse pulse__two"></span><span class="loader__dot pulse pulse__three"></span></div>
@@ -32,7 +32,7 @@
     </transition>
   <div class="search-footer items-center column justify-start">
     <q-btn flat style="color: #38A4DD">See all skills</q-btn>
-    <q-input ref="message" @click="scrollIntoView" @keyup.enter.native="sendMessage" v-model="userMessage" color="blue 4" class="send-message" :after="userMessage.length > 0 ? [{icon: 'send', content: true, handler:() => { this.sendMessage() }}] :  [{icon: 'mic', content: false, handler:() => { this.createVoiceMessage() }}] " :placeholder="!searching ? 'Say or type your search...' : 'Searching...'"/>
+    <q-input ref="message" @click="scrollIntoView" @keyup.enter.native="sendMessage" v-model="userMessage" color="blue 4" class="send-message" :after="userMessage.length > 0 ? [{icon: 'send', content: true, handler:() => { this.sendMessage() }}] :  [{icon: 'mic', content: false, handler:() => { this.createVoiceMessage() }}] " :placeholder="userMessagePlaceholder"/>
   </div>
 
   </q-page>
@@ -52,6 +52,7 @@ export default {
     return {
       result: false,
       listening: false,
+      userMessagePlaceholder: 'Say or type your search...',
       userMessage: '',
       searching: false,
       messages: [],
@@ -72,6 +73,7 @@ export default {
 
         this.userMessage = '';
         this.searching = true;
+        this.userMessagePlaceholder = 'Searching...';
         setTimeout(() => {
           this.searching = false;
           this.result = true;
@@ -86,12 +88,35 @@ export default {
             sent: false,
           };
           this.messages.push(newMessageReply);
+          this.userMessagePlaceholder = 'Say or type your search...';
+          this.$refs.chatArea.setScrollPosition(this.$refs.chatArea.$el.scrollHeight, 1);
         }, 4000);
       }
     },
     createVoiceMessage() {
-      console.log(navigator);
+      let recognizing = false;
+      const recognition = new webkitSpeechRecognition();
+      const reset = () => {
+        recognizing = false;
+      };
+
+      reset();
       this.listening = true;
+      this.userMessagePlaceholder = 'Listening...';
+      recognition.continuous = true;
+      recognition.onend = reset();
+      recognition.start();
+      const self = this;
+      recognition.onresult = function (event) {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            self.userMessage = event.results[i][0].transcript;
+          }
+        }
+        self.listening = false;
+        self.sendMessage();
+        this.userMessagePlaceholder = 'Say or type your search...';
+      };
     },
   },
 };
