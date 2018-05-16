@@ -33,6 +33,10 @@ module.exports = {
     "consistent-return": 0,
     "max-len": 0,
     "no-unused-vars": 1,
+    "no-empty": 1,
+    camelcase: 0,
+    eqeqeq: 0,
+    "no-undef": 1,
 
     // allow debugger during development
     "no-debugger": process.env.NODE_ENV === "production" ? 2 : 0

@@ -55,6 +55,9 @@ module.exports = function (ctx) {
         'QItem',
         'QItemMain',
         'QItemSide',
+        'QChatMessage',
+        'QScrollArea',
+        'QInput',
       ],
       directives: ['Ripple'],
       // Quasar plugins
@@ -73,6 +76,14 @@ module.exports = function (ctx) {
         orientation: 'portrait',
         background_color: '#ffffff',
         theme_color: '#027be3',
+        permissions: {
+          'audio-capture': {
+            description: 'Audio capture',
+          },
+          'speech-recognition': {
+            description: 'Speech recognition',
+          },
+        },
         icons: [
           {
             src: 'statics/icons/icon-128x128.png',

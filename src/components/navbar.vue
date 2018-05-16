@@ -4,7 +4,7 @@
         class="navbar"
         color=""
     >
-        <q-toolbar-title class="absolute-center">
+        <q-toolbar-title class="absolute-center nav-title">
           {{title}}
         </q-toolbar-title>
         <q-toolbar-title></q-toolbar-title>
@@ -24,6 +24,17 @@ export default {
 </script>
 
 <style style="scss">
+.nav-title {
+  /* Search */
+
+  font-family: Montserrat;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 48px;
+  font-size: 16px;
+
+  color: #ffffff;
+}
 .navbar {
   background: #1c92d2; /* fallback for old browsers */
   background: -webkit-linear-gradient(
