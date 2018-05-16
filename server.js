@@ -6,6 +6,9 @@ const device = require('express-device');
 const port = process.env.PORT || 3000;
 const app = express();
 
+const redirectToHTTPS = require('express-http-to-https').redirectToHTTPS;
+
+app.use(redirectToHTTPS([/localhost:(\d{4})/], [/\/insecure/], 301));
 app.use(device.capture());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

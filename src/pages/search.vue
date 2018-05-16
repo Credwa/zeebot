@@ -1,30 +1,40 @@
 <template>
 <div>
   <navbar title="Search"></navbar>
-  <q-page class="items-center column justify-start">
+  <q-page class="items-center column justify-start search-page">
     <div class="pre-box">
       <div class="dimensions-box">
       </div>
     </div>
+    <transition appear enter-active-class="animated slideInUp">
+      <q-scroll-area style="" class="messaging items-center column justify-start">
+        <div v-if="!searching && !result && !listening" class="zeebot flex column items-center">
+          <img  alt="ZeeBot" src="~assets/zeebot-init.svg">
+          <div class="assist">Hello! How Can I help you?</div>
+        </div>
+        <div v-if="listening" class="zeebot flex column items-center">
+          <img  alt="ZeeBot" src="~assets/zeebot-listening.svg" style="margin-left:65px">
+          <div class="assist flex column " style="margin-left:55px">Listening
+            <div class="loader"><span class="loader__dot pulse pulse__one"></span><span class="loader__dot pulse pulse__two"></span><span class="loader__dot pulse pulse__three"></span></div>
+          </div>
+        </div>
+        <div v-if="searching && !result && !listening" class="zeebot flex column items-center ">
+          <img  alt="ZeeBot" src="~assets/zeebot-searching.svg" style="margin-left:-55px">
+          <div class="assist flex column " style="margin-left:55px">Searching
+            <div class="loader"><span class="loader__dot pulse pulse__one"></span><span class="loader__dot pulse pulse__two"></span><span class="loader__dot pulse pulse__three"></span></div>
+          </div>
+        </div>
+        <div>
+          <message v-for="message in messages" :key="message.stamp+message.text" :myMessage="message"></message>
+        </div>
 
-    <q-scroll-area style="" class="messaging items-center column justify-start">
-      <div v-if="!searching && !result" class="zeebot flex column items-center">
-        <img  alt="ZeeBot" src="~assets/zeebot-init.svg">
-        <div class="assist">Hello! How Can I help you?</div>
-      </div>
-      <div v-if="searching && !result" class="zeebot flex column items-center">
-        <img  alt="ZeeBot" src="~assets/zeebot-searching.svg">
-        <div class="assist">Searching...</div>
-      </div>
-      <div>
-        <message v-for="message in messages" :key="message.stamp+message.text" :myMessage="message"></message>
-      </div>
-
-    </q-scroll-area>
+      </q-scroll-area>
+    </transition>
   <div class="search-footer items-center column justify-start">
     <q-btn flat style="color: #38A4DD">See all skills</q-btn>
     <q-input ref="message" @click="scrollIntoView" @keyup.enter.native="sendMessage" v-model="userMessage" color="blue 4" class="send-message" :after="userMessage.length > 0 ? [{icon: 'send', content: true, handler:() => { this.sendMessage() }}] :  [{icon: 'mic', content: false, handler:() => { this.createVoiceMessage() }}] " :placeholder="!searching ? 'Say or type your search...' : 'Searching...'"/>
   </div>
+
   </q-page>
 </div>
 </template>
@@ -41,10 +51,10 @@ export default {
   data() {
     return {
       result: false,
+      listening: false,
       userMessage: '',
       searching: false,
-      messages: [
-      ],
+      messages: [],
       moment,
     };
   },
@@ -67,7 +77,11 @@ export default {
           this.result = true;
           this.messages.push(newMessage);
           const newMessageReply = {
-            text: [`Here are search results for '${this.messages[this.messages.length - 1].text}': `],
+            text: [
+              `Here are search results for '${
+                this.messages[this.messages.length - 1].text
+              }': `,
+            ],
             stamp: moment(),
             sent: false,
           };
@@ -77,12 +91,16 @@ export default {
     },
     createVoiceMessage() {
       console.log(navigator);
+      this.listening = true;
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
+.search-page {
+}
+
 .pre-box {
   background-color: #fafafa;
   width: 100vw;
@@ -144,6 +162,185 @@ export default {
   background-color: rgba(38, 50, 56, 0.03);
   @media screen and (min-width: 586px) {
     width: 500px;
+  }
+}
+.loader {
+  position: relative;
+  margin-top: 15px;
+  margin-left: -40px;
+}
+.loader__dot {
+  display: block;
+  width: 6px;
+  height: 6px;
+  margin: 3px;
+  border-radius: 50px;
+  background-color: #1a1a1a;
+  float: left;
+}
+.pulse {
+  will-change: transform, opacity;
+  -webkit-animation: pulse 1.25s infinite ease;
+  animation: pulse 1.25s infinite ease;
+}
+.pulse__one {
+  -webkit-animation-delay: 250ms;
+  animation-delay: 250ms;
+}
+.pulse__two {
+  -webkit-animation-delay: 500ms;
+  animation-delay: 500ms;
+}
+.pulse__three {
+  -webkit-animation-delay: 750ms;
+  animation-delay: 750ms;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  height: 100vh;
+  align-items: center;
+  background-color: #fff;
+}
+@-webkit-keyframes pulse {
+  0% {
+    opacity: 0.5;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    -webkit-transform: scale(1.25);
+    transform: scale(1.25);
+  }
+  100% {
+    opacity: 0.5;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    -webkit-transform: scale(1.25);
+    transform: scale(1.25);
+  }
+  100% {
+    opacity: 0.5;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+  }
+}
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  to {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+}
+@keyframes spin {
+  from {
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
+  }
+  to {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+}
+@-webkit-keyframes slide {
+  from {
+    -webkit-transform: translateX(0px);
+    transform: translateX(0px);
+  }
+  to {
+    -webkit-transform: translateX(18px);
+    transform: translateX(18px);
+  }
+}
+@keyframes slide {
+  from {
+    -webkit-transform: translateX(0px);
+    transform: translateX(0px);
+  }
+  to {
+    -webkit-transform: translateX(18px);
+    transform: translateX(18px);
+  }
+}
+@-webkit-keyframes fadeIn {
+  0% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeOut {
+  0% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+@keyframes fadeOut {
+  0% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(0);
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+@-webkit-keyframes pulseWave {
+  25% {
+    box-shadow: 0 0 0 0 rgba(26, 26, 26, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(26, 26, 26, 0);
+  }
+}
+@keyframes pulseWave {
+  25% {
+    box-shadow: 0 0 0 0 rgba(26, 26, 26, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(26, 26, 26, 0);
   }
 }
 </style>

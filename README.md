@@ -1,3 +1,3 @@
-# Quasar App
+# Zeebot
 
-> WIP
+> Progressive web app chatbot

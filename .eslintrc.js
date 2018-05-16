@@ -36,6 +36,7 @@ module.exports = {
     "no-empty": 1,
     camelcase: 0,
     eqeqeq: 0,
+    "no-tabs": 0,
     "no-undef": 1,
 
     // allow debugger during development

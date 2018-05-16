@@ -64,7 +64,7 @@ module.exports = function (ctx) {
       plugins: ['Notify', 'AddressbarColor'],
     },
     // animations: 'all' --- includes all animations
-    animations: [],
+    animations: ['slideInUp'],
     pwa: {
       cacheExt:
         'js,html,css,ttf,eot,otf,woff,woff2,json,svg,gif,jpg,jpeg,png,wav,ogg,webm,flac,aac,mp4,mp3',
