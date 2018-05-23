@@ -36,6 +36,7 @@ module.exports = {
     "no-empty": 1,
     "new-cap": 0,
     "no-plusplus": 0,
+    "arrow-parens": [2, "as-needed", { requireForBlockBody: true }],
     camelcase: 0,
     eqeqeq: 0,
     "no-tabs": 0,

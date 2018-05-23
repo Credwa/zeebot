@@ -7,32 +7,32 @@
       </div>
     </div>
     <transition appear enter-active-class="animated slideInUp">
-      <q-scroll-area ref="chatArea" style="" class="messaging items-center column justify-start">
+      <q-scroll-area ref="chatArea" :thumb-style="{right: '4px',borderRadius: '5px',background:'none',width: '0px',opacity: 1}" style="" class="messaging items-center column justify-start" :delay="1500">
         <div v-if="!searching && !result && !listening" class="zeebot flex column items-center">
-          <img  alt="ZeeBot" src="~assets/zeebot-init.svg">
-          <div class="assist">Hello! How Can I help you?</div>
+          <img  alt="ZeeBot" src="~assets/zeebot-init.svg" style="margin-left:25px">
+          <div class="assist" style="margin-left:25px">Hello! How Can I help you?</div>
         </div>
         <div v-if="listening && !result" class="zeebot flex column items-center">
-          <img  alt="ZeeBot" src="~assets/zeebot-listening.svg" style="margin-left:65px">
-          <div class="assist flex column " style="margin-left:55px">Listening
+          <img  alt="ZeeBot" src="~assets/zeebot-listening.svg" style="margin-left:85px">
+          <div class="assist flex column " style="margin-left:90px">Listening
             <div class="loader"><span class="loader__dot pulse pulse__one"></span><span class="loader__dot pulse pulse__two"></span><span class="loader__dot pulse pulse__three"></span></div>
           </div>
         </div>
         <div v-if="searching && !result && !listening" class="zeebot flex column items-center ">
-          <img  alt="ZeeBot" src="~assets/zeebot-searching.svg" style="margin-left:-55px">
-          <div class="assist flex column " style="margin-left:55px">Searching
+          <img  alt="ZeeBot" src="~assets/zeebot-searching.svg" style="margin-left:-35px">
+          <div class="assist flex column " style="margin-left:90px">Searching
             <div class="loader"><span class="loader__dot pulse pulse__one"></span><span class="loader__dot pulse pulse__two"></span><span class="loader__dot pulse pulse__three"></span></div>
           </div>
         </div>
-        <div>
-          <message v-for="message in messages" :key="message.stamp+message.text" :myMessage="message"></message>
+        <div style="width: 100%; padding: 0px;" class="allMessages">
+          <message v-show="result" v-for="(message, index) in messages" :key="message.stamp+message.text+index" :myMessage="message"></message>
         </div>
 
       </q-scroll-area>
     </transition>
   <div class="search-footer items-center column justify-start">
-    <q-btn flat style="color: #38A4DD">See all skills</q-btn>
-    <q-input ref="message" @click="scrollIntoView" @keyup.enter.native="sendMessage" v-model="userMessage" color="blue 4" class="send-message" :after="userMessage.length > 0 ? [{icon: 'send', content: true, handler:() => { this.sendMessage() }}] :  [{icon: 'mic', content: false, handler:() => { this.createVoiceMessage() }}] " :placeholder="userMessagePlaceholder"/>
+    <q-btn v-if="!result" flat style="color: #38A4DD; text-decoration: underline"><span>See all skills</span></q-btn>
+    <q-input ref="message" @click="scrollIntoView" @keyup.enter.native="sendMessage" v-model="userMessage" color="blue 4" class="send-message shadow-1" :after="userMessage.length > 0 ? [{icon: 'send', content: true, handler:() => { this.sendMessage() }}] :  [{icon: 'mic', content: false, handler:() => { this.createVoiceMessage() }}] " :placeholder="userMessagePlaceholder"/>
   </div>
 
   </q-page>
@@ -41,6 +41,7 @@
 
 <script>
 import moment from 'moment';
+import _ from 'lodash';
 
 import navbar from '../components/navbar.vue';
 import message from '../components/message.vue';
@@ -63,34 +64,59 @@ export default {
     scrollIntoView() {
       this.$refs.message.$el.scrollIntoView({ behavior: 'smooth' });
     },
+    botReply: _.debounce((dataToSend, vm) => {
+      const { chatArea } = vm.$refs;
+      const finishSearching = function (reply) {
+        vm.searching = false;
+        vm.result = true;
+        // receieved message bot info setup
+        const newMessageReply = {
+          text: [`${reply}`],
+          stamp: moment(),
+          sent: false,
+        };
+        vm.messages.push(newMessageReply);
+        vm.userMessagePlaceholder = 'Say or type your search...';
+        // Keep scrolling as messages come in
+        chatArea.setScrollPosition(vm.$refs.chatArea.$el.clientHeight, 1000);
+        // chatArea.$el.setScrollPosition(this.$refs.chatArea.scrollHeight, 1);
+      };
+
+      vm.$axios
+        .post(`${vm.$API_URL}/response`, dataToSend)
+        .then((response) => {
+          finishSearching(response.data.message.text);
+        })
+        .catch((e) => {
+          console.log(e);
+          finishSearching("Couldn't find that.");
+        });
+    }, 500),
     sendMessage() {
       if (this.userMessage.length > 0) {
+        // sent message bot info setup
         const newMessage = {
           text: [this.userMessage],
           stamp: moment(),
           sent: true,
         };
 
-        this.userMessage = '';
         this.searching = true;
         this.userMessagePlaceholder = 'Searching...';
-        setTimeout(() => {
-          this.searching = false;
-          this.result = true;
-          this.messages.push(newMessage);
-          const newMessageReply = {
-            text: [
-              `Here are search results for '${
-                this.messages[this.messages.length - 1].text
-              }': `,
-            ],
-            stamp: moment(),
-            sent: false,
-          };
-          this.messages.push(newMessageReply);
-          this.userMessagePlaceholder = 'Say or type your search...';
-          this.$refs.chatArea.setScrollPosition(this.$refs.chatArea.$el.scrollHeight, 1);
-        }, 4000);
+        const data = {
+          message: this.userMessage,
+          context: '',
+        };
+        this.userMessage = '';
+        this.messages.push(newMessage);
+        // this.$set(this.messages, this.messages.length, newMessage);
+        console.log(this.messages);
+        // this.$refs.chatArea.setScrollPosition(
+        //   this.$refs.chatArea.scrollHeight,
+        //   1000,
+        // );
+        // get bot reply from backend
+        this.botReply(data, this);
       }
     },
     createVoiceMessage() {
@@ -106,15 +132,15 @@ export default {
       recognition.continuous = true;
       recognition.onend = reset();
       recognition.start();
-      const self = this;
+      const vm = this;
       recognition.onresult = function (event) {
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
-            self.userMessage = event.results[i][0].transcript;
+            vm.userMessage = event.results[i][0].transcript;
           }
         }
-        self.listening = false;
-        self.sendMessage();
+        vm.listening = false;
+        vm.sendMessage();
         this.userMessagePlaceholder = 'Say or type your search...';
       };
     },
@@ -139,7 +165,7 @@ export default {
     top: 1vh;
     height: 50px;
     left: calc(50% - 320px / 2);
-    background: url("/assets/dimension-box.png");
+    background: url("/statics/dimension-box.png");
   }
 }
 
@@ -161,12 +187,23 @@ export default {
 }
 
 .messaging {
-  padding-right: 10px;
+  overflow-y: scroll;
+  -ms-overflow-style: none; // IE 10+
+  overflow: -moz-scrollbars-none; // Firefox
+  padding-right: 15px;
   width: 100vw;
   height: 60vh;
   margin-top: 5vh;
   @media screen and (min-width: 586px) {
     width: 433px;
+  }
+  &::-webkit-scrollbar {
+    width: 0px; /* remove scrollbar space */
+    background: transparent; /* optional: just make scrollbar invisible */
+  }
+  /* optional: show position indicator in red */
+  &::-webkit-scrollbar-thumb {
+    background: none;
   }
 }
 
@@ -181,13 +218,19 @@ export default {
 
 .send-message {
   width: 95vw;
-  height: 5vh;
+  height: 35px;
   margin-top: 5vh;
+  border-radius: 2px;
   padding: 0vw 2vw 0vw 2vw;
   background-color: rgba(38, 50, 56, 0.03);
   @media screen and (min-width: 586px) {
     width: 500px;
   }
+}
+
+.q-if-inner {
+  color: red;
+  margin-top: 40px;
 }
 .loader {
   position: relative;

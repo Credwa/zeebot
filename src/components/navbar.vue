@@ -3,6 +3,7 @@
     <q-toolbar
         class="navbar"
         color=""
+        flat
     >
         <q-toolbar-title class="absolute-center nav-title">
           {{title}}
