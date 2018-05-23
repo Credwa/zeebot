@@ -42,15 +42,15 @@ export default {
   position: relative;
   max-width: 70vw;
   left: 100px;
-  margin-left: 500px;
+  // margin-left: 500px;
   @media screen and (min-width: 586px) {
     width: 25vw;
   }
 }
 
 .message {
-  margin-left: 15px;
-  margin-right: 5px;
+  // margin-left: 15px;
+  // margin-right: 5px;
   margin-top: 30px;
   .sent {
   }
