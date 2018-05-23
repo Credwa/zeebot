@@ -51,7 +51,7 @@ export default {
 .message {
   margin-left: 15px;
   margin-right: 5px;
-
+  margin-top: 30px;
   .sent {
   }
 
