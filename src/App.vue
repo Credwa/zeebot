@@ -76,7 +76,6 @@ html {
     display: block;
     position: absolute;
     bottom: -15px;
-    left: 17.5rem;
     -webkit-transform: rotate(90deg) skew(-25deg) translateY(16.6666666667px);
     transform: rotate(90deg) skew(-25deg) translateY(16.6666666667px);
   }

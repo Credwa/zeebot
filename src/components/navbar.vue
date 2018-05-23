@@ -9,7 +9,7 @@
           {{title}}
         </q-toolbar-title>
         <q-toolbar-title></q-toolbar-title>
-        <q-btn flat round dense icon="close" />
+        <q-btn aria-label="Close" flat round dense icon="close" />
     </q-toolbar>
   </q-layout-header>
 </template>

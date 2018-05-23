@@ -31,8 +31,8 @@
       </q-scroll-area>
     </transition>
   <div class="search-footer items-center column justify-start">
-    <q-btn v-if="!result" flat style="color: #38A4DD; text-decoration: underline"><span>See all skills</span></q-btn>
-    <q-input ref="message" @click="scrollIntoView" @keyup.enter.native="sendMessage" v-model="userMessage" color="blue 4" class="send-message shadow-1" :after="userMessage.length > 0 ? [{icon: 'send', content: true, handler:() => { this.sendMessage() }}] :  [{icon: 'mic', content: false, handler:() => { this.createVoiceMessage() }}] " :placeholder="userMessagePlaceholder"/>
+    <q-btn aria-label="Show all Skills" v-if="!result" flat style="color: #38A4DD; text-decoration: underline"><span>See all skills</span></q-btn>
+    <q-input aria-label="Say or type your search..." ref="message" @click="scrollIntoView" @keyup.enter.native="sendMessage" v-model="userMessage" color="blue 4" class="send-message shadow-1" :after="userMessage.length > 0 ? [{icon: 'send', content: true, handler:() => { this.sendMessage() }}] :  [{icon: 'mic', content: false, handler:() => { this.createVoiceMessage() }}] " :placeholder="userMessagePlaceholder"/>
   </div>
 
   </q-page>
@@ -191,7 +191,7 @@ export default {
   -ms-overflow-style: none; // IE 10+
   overflow: -moz-scrollbars-none; // Firefox
   padding-right: 15px;
-  width: 100vw;
+  width: 101vw;
   height: 60vh;
   margin-top: 5vh;
   @media screen and (min-width: 586px) {

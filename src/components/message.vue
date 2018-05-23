@@ -27,11 +27,19 @@ export default {
 <style scoped lang="scss">
 .received {
   background: #fafafa;
+  // margin-left: 10px;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12),
     0px 0px 2px rgba(0, 0, 0, 0.14);
-  max-width: 70vw;
+  width: 60vw !important;
+  margin-left: 30px !important;
   @media screen and (min-width: 586px) {
-    width: 25vw;
+    width: 25vw !important;
+  }
+  @media screen and (min-width: 999px) {
+    width: 20vw !important;
+  }
+  @media screen and (min-width: 1500px) {
+    width: 15vw !important;
   }
 }
 
@@ -40,11 +48,17 @@ export default {
     0px 0px 2px rgba(0, 0, 0, 0.14);
   background: #fafafa;
   position: relative;
-  max-width: 70vw;
+  max-width: 60vw;
   left: 100px;
   // margin-left: 500px;
   @media screen and (min-width: 586px) {
-    width: 25vw;
+    width: 25vw !important;
+  }
+  @media screen and (min-width: 999px) {
+    width: 20vw !important;
+  }
+  @media screen and (min-width: 1500px) {
+    width: 15vw !important;
   }
 }
 
