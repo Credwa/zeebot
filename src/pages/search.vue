@@ -9,19 +9,25 @@
     <transition appear enter-active-class="animated slideInUp">
       <q-scroll-area ref="chatArea" :thumb-style="{right: '4px',borderRadius: '5px',background:'none',width: '0px',opacity: 1}" style="" class="messaging items-center column justify-start" :delay="1500">
         <div v-if="!searching && !result && !listening" class="zeebot flex column items-center">
-          <img  alt="ZeeBot" src="~assets/zeebot-init.svg" style="margin-left:25px">
-          <div class="assist" style="margin-left:25px">Hello! How Can I help you?</div>
+          <div  class="zeebot-init">
+            <img  alt="ZeeBot" src="~assets/zeebot-init.svg">
+            <div class="assist">Hello! How Can I help you?</div>
+          </div>
         </div>
         <div v-if="listening && !result" class="zeebot flex column items-center">
-          <img  alt="ZeeBot" src="~assets/zeebot-listening.svg" style="margin-left:85px">
-          <div class="assist flex column " style="margin-left:90px">Listening
-            <div class="loader"><span class="loader__dot pulse pulse__one"></span><span class="loader__dot pulse pulse__two"></span><span class="loader__dot pulse pulse__three"></span></div>
+          <div  class="zeebot-listen">
+            <img  alt="ZeeBot" src="~assets/zeebot-listening.svg">
+            <div class="assist flex column ">Listening
+              <div class="loader"><span class="loader__dot pulse pulse__one"></span><span class="loader__dot pulse pulse__two"></span><span class="loader__dot pulse pulse__three"></span></div>
+            </div>
           </div>
         </div>
         <div v-if="searching && !result && !listening" class="zeebot flex column items-center ">
-          <img  alt="ZeeBot" src="~assets/zeebot-searching.svg" style="margin-left:-35px">
-          <div class="assist flex column " style="margin-left:90px">Searching
-            <div class="loader"><span class="loader__dot pulse pulse__one"></span><span class="loader__dot pulse pulse__two"></span><span class="loader__dot pulse pulse__three"></span></div>
+          <div  class="zeebot-search">
+            <img  alt="ZeeBot" src="~assets/zeebot-searching.svg">
+            <div class="assist flex column " style="margin-left: 150px;">Searching
+              <div class="loader"><span class="loader__dot pulse pulse__one"></span><span class="loader__dot pulse pulse__two"></span><span class="loader__dot pulse pulse__three"></span></div>
+            </div>
           </div>
         </div>
         <div style="width: 100%; padding: 0px;" class="allMessages">
@@ -82,10 +88,42 @@ export default {
         // chatArea.$el.setScrollPosition(this.$refs.chatArea.scrollHeight, 1);
       };
 
+      const finishSearchingMulti = function (reply) {
+        vm.searching = false;
+        vm.result = true;
+        let craftedReply = null;
+        // receieved message bot info setup
+        if (reply.lines) {
+          craftedReply = Object.values(reply.lines).join('\n');
+        }
+        console.log(craftedReply);
+        const newMessageReply = {
+          text: reply.lines ? reply.lines : null,
+          stamp: moment(),
+          sent: false,
+          type: 'multi',
+          links: reply.links ? reply.links : null,
+        };
+        console.log(newMessageReply);
+        vm.messages.push(newMessageReply);
+        vm.userMessagePlaceholder = 'Say or type your search...';
+        // Keep scrolling as messages come in
+        chatArea.setScrollPosition(vm.$refs.chatArea.$el.clientHeight, 1000);
+        // chatArea.$el.setScrollPosition(this.$refs.chatArea.scrollHeight, 1);
+      };
+
       vm.$axios
         .post(`${vm.$API_URL}/response`, dataToSend)
         .then((response) => {
-          finishSearching(response.data.message.text);
+          // console.log(response.data);
+          if (response.data.messagetype) {
+            if (response.data.message.lines || response.data.message.links) {
+              console.log(response.data.message.links);
+              finishSearchingMulti(response.data.message);
+            }
+          } else {
+            finishSearching(response.data.message.text);
+          }
         })
         .catch((e) => {
           console.log(e);
@@ -110,7 +148,6 @@ export default {
         this.userMessage = '';
         this.messages.push(newMessage);
         // this.$set(this.messages, this.messages.length, newMessage);
-        console.log(this.messages);
         // this.$refs.chatArea.setScrollPosition(
         //   this.$refs.chatArea.scrollHeight,
         //   1000,
@@ -149,7 +186,58 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.search-page {
+.zeebot-init {
+  text-align: center;
+  margin-left: 15px;
+  margin-top: 3vh;
+  @media screen and (min-width: 575px) {
+    margin-left: -25px;
+  }
+  @media screen and (min-width: 767px) {
+    margin-left: -150px;
+  }
+  @media screen and (min-width: 991px) {
+    margin-left: -10px;
+  }
+  @media screen and (min-width: 1199px) {
+    margin-left: -10px;
+  }
+}
+
+.zeebot-listen {
+  text-align: center;
+  margin-left: 75px;
+  margin-top: 3vh;
+  @media screen and (min-width: 575px) {
+    margin-left: 40px;
+  }
+  @media screen and (min-width: 767px) {
+    margin-left: -80px;
+  }
+  @media screen and (min-width: 991px) {
+    margin-left: 60px;
+  }
+  @media screen and (min-width: 1199px) {
+    margin-left: 60px;
+  }
+}
+
+.zeebot-search {
+  text-align: center;
+  margin-top: 3vh;
+  margin-left: -55px;
+  @media screen and (min-width: 575px) {
+    margin-left: -90px;
+  }
+  @media screen and (min-width: 767px) {
+    margin-left: -220px;
+  }
+  @media screen and (min-width: 991px) {
+    margin-left: -70px;
+  }
+  @media screen and (min-width: 1199px) {
+    margin-left: -70px;
+  }
 }
 
 .pre-box {
@@ -191,11 +279,23 @@ export default {
   -ms-overflow-style: none; // IE 10+
   overflow: -moz-scrollbars-none; // Firefox
   padding-right: 15px;
-  width: 101vw;
+  width: 100vw;
   height: 60vh;
-  margin-top: 5vh;
-  @media screen and (min-width: 586px) {
-    width: 433px;
+  margin-top: 0vh;
+  @media screen and (min-width: 575px) {
+    width: 90vw;
+    left: 20px;
+  }
+  @media screen and (min-width: 767px) {
+    width: 80vw !important;
+    left: 80px;
+  }
+  @media screen and (min-width: 991px) {
+    width: 60vw !important;
+    left: 10px;
+  }
+  @media screen and (min-width: 1199px) {
+    width: 800px !important;
   }
   &::-webkit-scrollbar {
     width: 0px; /* remove scrollbar space */

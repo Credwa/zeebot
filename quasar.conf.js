@@ -43,7 +43,6 @@ module.exports = function (ctx) {
       components: [
         'QLayout',
         'QLayoutHeader',
-        'QLayoutDrawer',
         'QPageContainer',
         'QPage',
         'QToolbar',
@@ -58,6 +57,7 @@ module.exports = function (ctx) {
         'QChatMessage',
         'QScrollArea',
         'QInput',
+        'QItemSeparator',
       ],
       directives: ['Ripple'],
       // Quasar plugins
