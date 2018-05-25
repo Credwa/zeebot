@@ -11,10 +11,10 @@
           :text-color="myMessage.sent ? 'white' : 'black'"
     />
     <div v-if="myMessage.type" class="customMessage">
-      <p v-for="(line, index) in myMessage.text" :key="index"><span>{{line}}</span></p>
+      <div v-for="(line, index) in myMessage.text" :key="index"><span>{{line}}<br></span></div>
       <p :style="!myMessage.text && myMessage.links ? 'margin-top:2vh' : ''" class="stamp">{{moment(myMessage.stamp).format('MM/DD hh:mm A')}}</p>
       <q-list separator highlight  no-border>
-        <q-item v-for="(link, index) in myMessage.links" :key="index">
+        <q-item v-for="(link, index) in myMessage.links" :key="index" tag="a"  style="text-decoration:none" :href="link.link" target="_blank">
           <q-item-side style="margin-left: -15px" :image="link.linkthumbnail"></q-item-side>
           <q-item-main class="links-label" :label="link.linkdesc" />
         </q-item>
@@ -44,7 +44,7 @@ export default {
 }
 
 .customMessage {
-  padding: 5px 11px 2px 11px;
+  padding: 5px 11px 5px 11px;
   display: inline-block;
   font-family: Montserrat;
   margin-top: 3vh;
@@ -79,14 +79,14 @@ export default {
     letter-spacing: -0.05em;
     text-transform: capitalize;
     color: #263238;
-    padding-top: 0;
+    padding-bottom: 30px;
   }
 
   .stamp {
     font-family: Montserrat;
     font-style: normal;
     font-weight: 500;
-    margin-top: -1vh;
+    margin-top: 0.5vh;
     margin-bottom: -1vh;
     font-size: 12px;
     color: rgba(38, 50, 56, 0.3);

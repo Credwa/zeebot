@@ -81,6 +81,10 @@ html {
   }
 }
 
+.q-item-label {
+  text-decoration: none !important;
+}
+
 .q-message-sent .q-message-text:last-child:before {
   border: 12.5px solid transparent;
   border-top: 12.5px solid currentColor;
