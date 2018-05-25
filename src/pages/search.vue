@@ -127,7 +127,12 @@ export default {
         })
         .catch((e) => {
           console.log(e);
-          finishSearching("Couldn't find that.");
+          if (navigator.onLine) {
+            finishSearching('Oops something went wrong.');
+          } else {
+            finishSearching(`You are offline...
+            will respond when you are back online :).`);
+          }
         });
     }, 500),
     sendMessage() {
@@ -181,6 +186,9 @@ export default {
         this.userMessagePlaceholder = 'Say or type your search...';
       };
     },
+  },
+  created() {
+    console.log(navigator);
   },
 };
 </script>
