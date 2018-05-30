@@ -64,6 +64,53 @@ html {
   transform: rotate(270deg) skew(-25deg) translateY(16.6666666667px) !important;
 }
 
+.self-start {
+  transform: translateX(-1em) scale(0);
+  transform-origin: top left;
+  animation: load-bubble 1s;
+  animation-fill-mode: forwards;
+}
+
+.self-start .q-message-text-content {
+  max-height: 0;
+  opacity: 0;
+  animation: load-text 1s;
+  animation-delay: 0;
+  animation-fill-mode: forwards;
+  max-height: 0;
+  max-width: 0;
+  overflow: hidden;
+  display: block;
+}
+
+@keyframes load-text {
+  10% {
+    max-height: 0;
+    max-width: 0;
+  }
+  50% {
+    opacity: 0;
+    max-height: 0;
+    max-width: 600px;
+  }
+  90% {
+    max-height: 500px;
+    max-width: 600px;
+  }
+  100% {
+    opacity: 1;
+    max-height: 500px;
+    max-width: 600px;
+  }
+}
+
+@keyframes load-bubble {
+  100% {
+    transform: translateX(0) scale(1);
+    max-height: 500px;
+  }
+}
+
 @media screen and (min-width: 1235px) {
   .q-message-sent .q-message-text:last-child:before {
     border: 12.5px solid transparent;

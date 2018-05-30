@@ -1,7 +1,5 @@
 <template>
-<div>
-  <div v-if="!myMessage.sent">
-      <transition :duration="3000" before-appear appear enter-active-class="animated fadeIn">
+  <transition appear>
     <q-chat-message
     v-if="!myMessage.type"
           :text="myMessage.text"
@@ -29,37 +27,6 @@
       </q-list>
     </div>
   </transition>
-  </div>
-  <div v-if="myMessage.sent">
-        <q-chat-message
-    v-if="!myMessage.type"
-          :text="myMessage.text"
-          :stamp="moment(myMessage.stamp).format('MM/DD hh:mm A')"
-          :sent="myMessage.sent"
-          :class="myMessage.sent ? 'self-end ' + 'sent message' : 'self-start ' + 'received message'"
-          :bg-color="myMessage.sent ? 'primary' : 'grey-1'"
-          size=12
-          :text-color="myMessage.sent ? 'white' : 'black'"
-    />
-    <div v-if="myMessage.type" class="customMessage">
-      <div class="lines-group">
-      <div v-for="(line, index) in myMessage.text" :key="index">
-      <span>{{line}}<br></span>
-      </div>
-      </div>
-
-      <p :style="myMessage.links ? 'margin-bottom:0vh' : ''" class="stamp">{{moment(myMessage.stamp).format('MM/DD hh:mm A')}}</p>
-
-      <q-list separator highlight  no-border>
-        <q-item v-for="(link, index) in myMessage.links" :key="index" tag="a"  style="text-decoration:none" :href="link.link" target="_blank">
-          <q-item-side style="margin-left: -15px" :image="link.linkthumbnail"></q-item-side>
-          <q-item-main class="links-label" :label="link.linkdesc" />
-        </q-item>
-      </q-list>
-    </div>
-  </div>
-</div>
-
 </template>
 
 <script>
@@ -92,6 +59,10 @@ export default {
   font-style: normal;
   background: #fafafa;
   font-weight: 500;
+  transform: translateX(-1em) scale(0);
+  transform-origin: top left;
+  animation: load-bubble 1s;
+  animation-fill-mode: forwards;
   box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12),
     0px 0px 2px rgba(0, 0, 0, 0.14);
   @media screen and (min-width: 575px) {
@@ -153,6 +124,15 @@ export default {
 
   .lines-group {
     padding: 16px;
+    max-height: 0;
+    opacity: 0;
+    animation: load-text 1s;
+    animation-delay: 0;
+    animation-fill-mode: forwards;
+    max-height: 0;
+    max-width: 0;
+    overflow: hidden;
+    display: block;
   }
 }
 
