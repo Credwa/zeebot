@@ -30,7 +30,7 @@
             </div>
           </div>
         </div>
-        <div style="width: 100%; padding: 0px;" class="allMessages">
+        <div style="width: 100%; padding: 0px;" class="allMessages" ref="allMessages">
           <message v-show="result" v-for="(message, index) in messages" :key="message.stamp+message.text+index" :myMessage="message"></message>
         </div>
 
@@ -49,7 +49,9 @@
 import moment from 'moment';
 import _ from 'lodash';
 import localforage from 'localforage';
+import { scroll } from 'quasar';
 
+const { getScrollTarget } = scroll;
 import navbar from '../components/navbar.vue';
 import message from '../components/message.vue';
 
@@ -116,7 +118,8 @@ export default {
       this.messages.push(newMessageReply);
       this.userMessagePlaceholder = 'Say or type your search...';
       // Keep scrolling as messages come in
-      chatArea.setScrollPosition(this.$refs.chatArea.$el.clientHeight, 1000);
+      chatArea.setScrollPosition(this.messages.length * 150, 1000);
+      // console.log(getScrollTarget(this.$refs.chatArea.$el));
       // chatArea.$el.setScrollPosition(this.$refs.chatArea.scrollHeight, 1);
     },
 
