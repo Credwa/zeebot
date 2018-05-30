@@ -1,5 +1,7 @@
 <template>
-  <transition appear enter-active-class="slideInUp">
+<div>
+  <div v-if="!myMessage.sent">
+      <transition :duration="3000" before-appear appear enter-active-class="animated fadeIn">
     <q-chat-message
     v-if="!myMessage.type"
           :text="myMessage.text"
@@ -27,6 +29,37 @@
       </q-list>
     </div>
   </transition>
+  </div>
+  <div v-if="myMessage.sent">
+        <q-chat-message
+    v-if="!myMessage.type"
+          :text="myMessage.text"
+          :stamp="moment(myMessage.stamp).format('MM/DD hh:mm A')"
+          :sent="myMessage.sent"
+          :class="myMessage.sent ? 'self-end ' + 'sent message' : 'self-start ' + 'received message'"
+          :bg-color="myMessage.sent ? 'primary' : 'grey-1'"
+          size=12
+          :text-color="myMessage.sent ? 'white' : 'black'"
+    />
+    <div v-if="myMessage.type" class="customMessage">
+      <div class="lines-group">
+      <div v-for="(line, index) in myMessage.text" :key="index">
+      <span>{{line}}<br></span>
+      </div>
+      </div>
+
+      <p :style="myMessage.links ? 'margin-bottom:0vh' : ''" class="stamp">{{moment(myMessage.stamp).format('MM/DD hh:mm A')}}</p>
+
+      <q-list separator highlight  no-border>
+        <q-item v-for="(link, index) in myMessage.links" :key="index" tag="a"  style="text-decoration:none" :href="link.link" target="_blank">
+          <q-item-side style="margin-left: -15px" :image="link.linkthumbnail"></q-item-side>
+          <q-item-main class="links-label" :label="link.linkdesc" />
+        </q-item>
+      </q-list>
+    </div>
+  </div>
+</div>
+
 </template>
 
 <script>
