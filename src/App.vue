@@ -141,22 +141,4 @@ i.q-icon.q-if-control.material-icons {
   padding-top: 0px !important;
   padding-left: 16px;
 }
-
-@keyframes types {
-  from {
-    width: 0;
-  }
-}
-
-@keyframes types2 {
-  0% {
-    width: 0;
-  }
-  50% {
-    width: 0;
-  }
-  100% {
-    width: 100;
-  }
-}
 </style>

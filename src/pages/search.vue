@@ -11,7 +11,7 @@
         <div v-if="!searching && !result && !listening" class="zeebot flex column items-center">
           <div  class="zeebot-init">
             <img  alt="ZeeBot" src="~assets/zeebot-init.svg">
-            <div class="assist">Hello! How Can I help you?</div>
+            <div class="assist first-load">Hello! How Can I help you?</div>
           </div>
         </div>
         <div v-if="listening && !result" class="zeebot flex column items-center">
@@ -71,35 +71,12 @@ export default {
     scrollIntoView() {
       this.$refs.message.$el.scrollIntoView({ behavior: 'smooth' });
     },
-    splitTextToLines(text) {
-      const idealSplit = 32;
-      const maxSplit = 32;
-      let lineCounter = 0;
-      let lineIndex = 0;
-      const lines = [''];
-      let ch;
-      let i;
-
-      for (i = 0; i < text.length; i++) {
-        ch = text[i];
-        if (lineCounter >= idealSplit || lineCounter >= maxSplit) {
-          lineCounter = -1;
-          lineIndex++;
-          lines.push('');
-        }
-        lines[lineIndex] += ch;
-        lineCounter++;
-      }
-
-      return lines;
-    },
     makeRequestForBotReply(dataToSend, vm) {
       vm.$axios
         .post(`${vm.$API_URL}/response`, dataToSend)
         .then((response) => {
           if (response.data.messagetype) {
             if (response.data.message.lines || response.data.message.links) {
-              console.log(response.data.message.links);
               vm.finishSearchingMulti(response.data.message);
             } else {
               vm.finishSearching(response.data.message.text);
@@ -108,12 +85,9 @@ export default {
             response.data.message.lines ||
             response.data.message.links
           ) {
-            console.log(response.data.message.links);
             vm.finishSearchingMulti(response.data.message);
           } else {
             vm.finishSearching(response.data.message.text);
-            console.log(response.data.message.text);
-            console.log(vm.splitTextToLines(response.data.message.text));
           }
         })
         .catch((e) => {
@@ -134,16 +108,10 @@ export default {
       this.searching = false;
       this.result = true;
       // receieved message bot info setup
-      // const newMessageReply = {
-      //   text: [`${reply}`],
-      //   stamp: moment(),
-      //   sent: false,
-      // };
       const newMessageReply = {
-        text: this.splitTextToLines(reply),
+        text: [`${reply}`],
         stamp: moment(),
         sent: false,
-        type: 'multi',
       };
       this.messages.push(newMessageReply);
       this.userMessagePlaceholder = 'Say or type your search...';
@@ -157,16 +125,8 @@ export default {
       const { chatArea } = this.$refs;
       this.searching = false;
       this.result = true;
-      let allLines = [];
-      console.log(typeof reply.lines);
-      if (reply.lines) {
-        Object.values(reply.lines).forEach((val) => {
-          allLines = [...allLines, ...vm.splitTextToLines(val)];
-        });
-      }
-      console.log(allLines);
       const newMessageReply = {
-        text: reply.lines ? allLines : null,
+        text: reply.lines ? reply.lines : null,
         stamp: moment(),
         sent: false,
         type: 'multi',
@@ -444,6 +404,32 @@ body {
   height: 100vh;
   align-items: center;
   background-color: #fff;
+}
+
+.first-load {
+  animation: types 4s steps(60, end);
+  width: 30em;
+  overflow-wrap: wrap;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+@keyframes types {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes types2 {
+  0% {
+    width: 0;
+  }
+  50% {
+    width: 0;
+  }
+  100% {
+    width: 100;
+  }
 }
 @-webkit-keyframes pulse {
   0% {
