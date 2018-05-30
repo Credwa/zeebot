@@ -11,8 +11,14 @@
           :text-color="myMessage.sent ? 'white' : 'black'"
     />
     <div v-if="myMessage.type" class="customMessage">
-      <div v-for="(line, index) in myMessage.text" :key="index"><span>{{line}}<br></span></div>
-      <p :style="!myMessage.text && myMessage.links ? 'margin-top:2vh' : ''" class="stamp">{{moment(myMessage.stamp).format('MM/DD hh:mm A')}}</p>
+      <div v-if="myMessage.text" class="css-typing" >
+      <p v-for="(line, index) in myMessage.text" :key="index">
+        {{line}}
+      </p>
+      </div>
+
+      <p :style="myMessage.links ? 'margin-bottom:0vh' : ''" class="stamp">{{moment(myMessage.stamp).format('MM/DD hh:mm A')}}</p>
+
       <q-list separator highlight  no-border>
         <q-item v-for="(link, index) in myMessage.links" :key="index" tag="a"  style="text-decoration:none" :href="link.link" target="_blank">
           <q-item-side style="margin-left: -15px" :image="link.linkthumbnail"></q-item-side>
@@ -36,19 +42,228 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.css-typing {
+  padding: 16px;
+}
+.css-typing p {
+  white-space: nowrap;
+  overflow: hidden;
+  margin: 0;
+}
+.css-typing p:nth-child(1) {
+  width: 30em;
+  -webkit-animation: type 2s steps(40, end);
+  animation: type 2s steps(40, end);
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+.css-typing p:nth-child(2) {
+  width: 30em;
+  opacity: 0;
+  -webkit-animation: type2 2s steps(40, end);
+  animation: type2 2s steps(40, end);
+  -webkit-animation-delay: 1s;
+  animation-delay: 1s;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+.css-typing p:nth-child(3) {
+  width: 30em;
+  opacity: 0;
+  -webkit-animation: type3 2s steps(20, end),
+    blink 0.5s step-end infinite alternate;
+  animation: type3 5s steps(20, end), blink 0.5s step-end infinite alternate;
+  -webkit-animation-delay: 2s;
+  animation-delay: 2s;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+.css-typing p:nth-child(4) {
+  width: 30em;
+  opacity: 0;
+  -webkit-animation: type3 2s steps(20, end),
+    blink 0.5s step-end infinite alternate;
+  animation: type3 5s steps(20, end), blink 0.5s step-end infinite alternate;
+  -webkit-animation-delay: 3s;
+  animation-delay: 3s;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+@keyframes type {
+  0% {
+    width: 0;
+  }
+  99.9% {
+    border-right: 0.15em solid orange;
+  }
+  100% {
+    border: none;
+  }
+}
+
+@-webkit-keyframes type {
+  0% {
+    width: 0;
+  }
+  99.9% {
+    border-right: 0.15em solid orange;
+  }
+  100% {
+    border: none;
+  }
+}
+
+@keyframes type2 {
+  0% {
+    width: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  99.9% {
+    border-right: 0.15em solid orange;
+  }
+  100% {
+    opacity: 1;
+    border: none;
+  }
+}
+
+@-webkit-keyframes type2 {
+  0% {
+    width: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  99.9% {
+    border-right: 0.15em solid orange;
+  }
+  100% {
+    opacity: 1;
+    border: none;
+  }
+}
+
+@keyframes type3 {
+  0% {
+    width: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes type3 {
+  0% {
+    width: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  50% {
+    border-color: transparent;
+  }
+}
+@-webkit-keyframes blink {
+  50% {
+    border-color: tranparent;
+  }
+}
+
+@keyframes type {
+  0% {
+    width: 0;
+  }
+  100% {
+    border: none;
+  }
+}
+
+@-webkit-keyframes type {
+  0% {
+    width: 0;
+  }
+  100% {
+    border: none;
+  }
+}
+
+@keyframes type2 {
+  0% {
+    width: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    border: none;
+  }
+}
+
+@-webkit-keyframes type2 {
+  0% {
+    width: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    border: none;
+  }
+}
+
+@keyframes type3 {
+  0% {
+    width: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes type3 {
+  0% {
+    width: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .customMessage:last-child {
-  min-height: 48px;
   .text-grey-2 {
     color: #fafafa !important;
   }
 }
 
 .customMessage {
-  padding: 5px 11px 5px 11px;
+  padding: 16px;
   display: inline-block;
   font-family: Montserrat;
   margin-top: 3vh;
-  max-width: 80vw;
+  max-width: 70vw;
   margin-bottom: 1vh;
   margin-left: 4vh;
   font-style: normal;
@@ -85,9 +300,9 @@ export default {
   .stamp {
     font-family: Montserrat;
     font-style: normal;
+    padding-left: 16px;
     font-weight: 500;
-    margin-top: 0.5vh;
-    margin-bottom: -1vh;
+    margin-bottom: -2vh;
     font-size: 12px;
     color: rgba(38, 50, 56, 0.3);
   }
@@ -108,7 +323,7 @@ export default {
     content: "";
     display: block;
     position: absolute;
-    transform-origin: -10% 0%;
+    transform-origin: -50% 0%;
     -webkit-transform: rotate(270deg) skew(-25deg) translateY(16.6666666667px) !important;
     transform: rotate(270deg) skew(-25deg) translateY(16.6666666667px) !important;
   }

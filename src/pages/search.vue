@@ -6,7 +6,7 @@
       <div class="dimensions-box">
       </div>
     </div>
-    <transition appear enter-active-class="animated slideInUp">
+    <transition appear enter-active-class="animated fadeIn">
       <q-scroll-area ref="chatArea" :thumb-style="{right: '4px',borderRadius: '5px',background:'none',width: '0px',opacity: 1}" style="" class="messaging items-center column justify-start" :delay="1500">
         <div v-if="!searching && !result && !listening" class="zeebot flex column items-center">
           <div  class="zeebot-init">
@@ -48,6 +48,7 @@
 <script>
 import moment from 'moment';
 import _ from 'lodash';
+import localforage from 'localforage';
 
 import navbar from '../components/navbar.vue';
 import message from '../components/message.vue';
@@ -70,70 +71,135 @@ export default {
     scrollIntoView() {
       this.$refs.message.$el.scrollIntoView({ behavior: 'smooth' });
     },
-    botReply: _.debounce((dataToSend, vm) => {
-      const { chatArea } = vm.$refs;
-      const finishSearching = function (reply) {
-        vm.searching = false;
-        vm.result = true;
-        // receieved message bot info setup
-        const newMessageReply = {
-          text: [`${reply}`],
-          stamp: moment(),
-          sent: false,
-        };
-        vm.messages.push(newMessageReply);
-        vm.userMessagePlaceholder = 'Say or type your search...';
-        // Keep scrolling as messages come in
-        chatArea.setScrollPosition(vm.$refs.chatArea.$el.clientHeight, 1000);
-        // chatArea.$el.setScrollPosition(this.$refs.chatArea.scrollHeight, 1);
-      };
+    splitTextToLines(text) {
+      const idealSplit = 32;
+      const maxSplit = 32;
+      let lineCounter = 0;
+      let lineIndex = 0;
+      const lines = [''];
+      let ch;
+      let i;
 
-      const finishSearchingMulti = function (reply) {
-        vm.searching = false;
-        vm.result = true;
-        let craftedReply = null;
-        // receieved message bot info setup
-        if (reply.lines) {
-          craftedReply = Object.values(reply.lines).join('\n');
+      for (i = 0; i < text.length; i++) {
+        ch = text[i];
+        if (lineCounter >= idealSplit || lineCounter >= maxSplit) {
+          lineCounter = -1;
+          lineIndex++;
+          lines.push('');
         }
-        console.log(craftedReply);
-        const newMessageReply = {
-          text: reply.lines ? reply.lines : null,
-          stamp: moment(),
-          sent: false,
-          type: 'multi',
-          links: reply.links ? reply.links : null,
-        };
-        console.log(newMessageReply);
-        vm.messages.push(newMessageReply);
-        vm.userMessagePlaceholder = 'Say or type your search...';
-        // Keep scrolling as messages come in
-        chatArea.setScrollPosition(vm.$refs.chatArea.$el.clientHeight, 1000);
-        // chatArea.$el.setScrollPosition(this.$refs.chatArea.scrollHeight, 1);
-      };
+        lines[lineIndex] += ch;
+        lineCounter++;
+      }
 
+      return lines;
+    },
+    makeRequestForBotReply(dataToSend, vm) {
       vm.$axios
         .post(`${vm.$API_URL}/response`, dataToSend)
         .then((response) => {
-          // console.log(response.data);
           if (response.data.messagetype) {
             if (response.data.message.lines || response.data.message.links) {
               console.log(response.data.message.links);
-              finishSearchingMulti(response.data.message);
+              vm.finishSearchingMulti(response.data.message);
+            } else {
+              vm.finishSearching(response.data.message.text);
             }
+          } else if (
+            response.data.message.lines ||
+            response.data.message.links
+          ) {
+            console.log(response.data.message.links);
+            vm.finishSearchingMulti(response.data.message);
           } else {
-            finishSearching(response.data.message.text);
+            vm.finishSearching(response.data.message.text);
+            console.log(response.data.message.text);
+            console.log(vm.splitTextToLines(response.data.message.text));
           }
         })
         .catch((e) => {
           console.log(e);
           if (navigator.onLine) {
-            finishSearching('Oops something went wrong.');
+            vm.finishSearching('Oops something went wrong.');
           } else {
-            finishSearching(`You are offline...
+            vm.finishSearching(`You are offline...
             will respond when you are back online :).`);
           }
         });
+    },
+    saveRequestDataLocally(dataToSave) {
+      return localStorage.setItem('dataToSync', dataToSave);
+    },
+    finishSearching(reply) {
+      const { chatArea } = this.$refs;
+      this.searching = false;
+      this.result = true;
+      // receieved message bot info setup
+      // const newMessageReply = {
+      //   text: [`${reply}`],
+      //   stamp: moment(),
+      //   sent: false,
+      // };
+      const newMessageReply = {
+        text: this.splitTextToLines(reply),
+        stamp: moment(),
+        sent: false,
+        type: 'multi',
+      };
+      this.messages.push(newMessageReply);
+      this.userMessagePlaceholder = 'Say or type your search...';
+      // Keep scrolling as messages come in
+      chatArea.setScrollPosition(this.$refs.chatArea.$el.clientHeight, 1000);
+      // chatArea.$el.setScrollPosition(this.$refs.chatArea.scrollHeight, 1);
+    },
+
+    finishSearchingMulti(reply) {
+      const vm = this;
+      const { chatArea } = this.$refs;
+      this.searching = false;
+      this.result = true;
+      let allLines = [];
+      console.log(typeof reply.lines);
+      if (reply.lines) {
+        Object.values(reply.lines).forEach((val) => {
+          allLines = [...allLines, ...vm.splitTextToLines(val)];
+        });
+      }
+      console.log(allLines);
+      const newMessageReply = {
+        text: reply.lines ? allLines : null,
+        stamp: moment(),
+        sent: false,
+        type: 'multi',
+        links: reply.links ? reply.links : null,
+      };
+      this.messages.push(newMessageReply);
+      this.userMessagePlaceholder = 'Say or type your search...';
+      // Keep scrolling as messages come in
+      chatArea.setScrollPosition(this.$refs.chatArea.$el.clientHeight, 1000);
+      // chatArea.$el.setScrollPosition(this.$refs.chatArea.scrollHeight, 1);
+    },
+    botReply: _.debounce((dataToSend, vm) => {
+      /*
+      * Service worker background sync reply
+      * back online
+      */
+      // if ('serviceWorker' in navigator && 'SyncManager' in window) {
+      //   navigator.serviceWorker.ready.then((registration) => {
+      //     vm.saveRequestDataLocally(dataToSend);
+      //     vm.makeRequestForBotReply(dataToSend, vm);
+      //     registration.sync
+      //       .register('sync-new-message')
+      //       .then(() => {})
+      //       .catch((e) => {
+      //         console.log(e);
+      //       });
+      //   });
+      // } else {
+      //   console.log(1);
+      //   vm.makeRequestForBotReply(dataToSend, vm);
+      // }
+      vm.saveRequestDataLocally(dataToSend);
+      vm.makeRequestForBotReply(dataToSend, vm);
     }, 500),
     sendMessage() {
       if (this.userMessage.length > 0) {
@@ -152,11 +218,6 @@ export default {
         };
         this.userMessage = '';
         this.messages.push(newMessage);
-        // this.$set(this.messages, this.messages.length, newMessage);
-        // this.$refs.chatArea.setScrollPosition(
-        //   this.$refs.chatArea.scrollHeight,
-        //   1000,
-        // );
         // get bot reply from backend
         this.botReply(data, this);
       }
@@ -189,6 +250,9 @@ export default {
   },
   created() {
     console.log(navigator);
+    navigator.serviceWorker.addEventListener('message', (event) => {
+      console.log('Client has recieved the data yayy', event.data);
+    });
   },
 };
 </script>

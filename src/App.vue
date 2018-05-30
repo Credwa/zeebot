@@ -85,6 +85,10 @@ html {
   text-decoration: none !important;
 }
 
+.q-message-text {
+  /* padding: 5px !important; */
+}
+
 .q-message-sent .q-message-text:last-child:before {
   border: 12.5px solid transparent;
   border-top: 12.5px solid currentColor;
@@ -102,5 +106,57 @@ html {
 
 .q-message-text:last-child:after {
   background: transparent;
+}
+
+input.col.q-input-target.q-no-input-spinner {
+  margin-top: -10px;
+}
+
+i.q-icon.q-if-control.material-icons {
+  line-height: 32px;
+}
+
+.q-message-text-content div:first-child {
+  padding: 16px;
+}
+
+.q-message-received .q-message-text-content div:first-child {
+  /* animation: types 4s steps(60, end);
+  width: 30em;
+  overflow-wrap: wrap;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  word-break: keep-all;
+  white-space: nowrap; */
+}
+
+.q-message-received .q-message-text-content div:first-child:nth-child(2) {
+  /* animation: types2 8s steps(60, end); */
+}
+
+.q-message-stamp {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+  padding-bottom: 0px !important;
+  padding-top: 0px !important;
+  padding-left: 16px;
+}
+
+@keyframes types {
+  from {
+    width: 0;
+  }
+}
+
+@keyframes types2 {
+  0% {
+    width: 0;
+  }
+  50% {
+    width: 0;
+  }
+  100% {
+    width: 100;
+  }
 }
 </style>

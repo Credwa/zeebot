@@ -17,6 +17,7 @@
     "express": "^4.16.3",
     "express-device": "^0.4.2",
     "express-http-to-https": "^1.1.4",
+    "localforage": "^1.7.1",
     "lodash": "^4.17.10",
     "moment": "^2.22.1"
   },
@@ -36,9 +37,5 @@
     "node": ">= 8.9.0",
     "npm": ">= 5.6.0"
   },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not ie <= 10"
-  ]
+  "browserslist": ["> 1%", "last 2 versions", "not ie <= 10"]
 }
