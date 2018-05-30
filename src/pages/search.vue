@@ -138,7 +138,7 @@ export default {
       this.messages.push(newMessageReply);
       this.userMessagePlaceholder = 'Say or type your search...';
       // Keep scrolling as messages come in
-      chatArea.setScrollPosition(this.$refs.chatArea.$el.clientHeight, 1000);
+      chatArea.setScrollPosition(this.messages.length * 150, 1000);
       // chatArea.$el.setScrollPosition(this.$refs.chatArea.scrollHeight, 1);
     },
     botReply: _.debounce((dataToSend, vm) => {
