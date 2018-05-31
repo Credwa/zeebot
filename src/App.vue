@@ -83,6 +83,10 @@ html {
   display: block;
 }
 
+.q-message-text-content {
+  padding: 8px !important;
+}
+
 @keyframes load-text {
   10% {
     max-height: 0;
@@ -132,10 +136,6 @@ html {
   text-decoration: none !important;
 }
 
-.q-message-text {
-  /* padding: 5px !important; */
-}
-
 .q-message-sent .q-message-text:last-child:before {
   border: 12.5px solid transparent;
   border-top: 12.5px solid currentColor;
@@ -163,29 +163,14 @@ i.q-icon.q-if-control.material-icons {
   line-height: 32px;
 }
 
-.q-message-text-content div:first-child {
-  padding: 16px;
-}
-
-.q-message-received .q-message-text-content div:first-child {
-  /* animation: types 4s steps(60, end);
-  width: 30em;
-  overflow-wrap: wrap;
-  overflow: hidden;
-  overflow-wrap: break-word;
-  word-break: keep-all;
-  white-space: nowrap; */
-}
-
-.q-message-received .q-message-text-content div:first-child:nth-child(2) {
-  /* animation: types2 8s steps(60, end); */
-}
-
 .q-message-stamp {
   margin-top: 0px !important;
   margin-bottom: 0px !important;
   padding-bottom: 0px !important;
-  padding-top: 0px !important;
-  padding-left: 16px;
+  padding-top: 8px !important;
+}
+
+.q-message-text-content {
+  padding: 0px !important;
 }
 </style>
