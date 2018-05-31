@@ -176,4 +176,31 @@ i.q-icon.q-if-control.material-icons {
 .q-message-text {
   padding: 16px;
 }
+
+.searching-results {
+  max-width: 60px;
+  max-height: 30px;
+  background: #fafafa;
+  margin-left: 30px;
+  margin-top: 3vh;
+}
+
+.searching-results .q-message-container {
+  max-height: 30px;
+}
+
+.searching-results .q-message-container .q-message-text {
+  height: 30px;
+  background: none;
+}
+
+.searching-results .q-message-container .q-message-text:before {
+  opacity: 0;
+}
+
+.searching-results
+  .q-message-container
+  .q-message-text
+  .q-message-text-content {
+}
 </style>

@@ -32,6 +32,15 @@
         </div>
         <div style="width: 100%; padding: 0px;" class="allMessages" ref="allMessages">
           <message v-show="result" v-for="(message, index) in messages" :key="message.stamp+message.text+index" :myMessage="message"></message>
+          <q-chat-message
+          v-if="result && searching"
+          :bg-color="'grey-1'"
+          size=1
+          :sent="false"
+          class="searching-results"
+          >
+            <q-spinner-dots size="2rem" />
+          </q-chat-message>
         </div>
 
       </q-scroll-area>
@@ -221,6 +230,15 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.searching-results {
+  // margin-left: 10px;
+  box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.2), 0px 2px 2px rgba(0, 0, 0, 0.12),
+    0px 0px 2px rgba(0, 0, 0, 0.14);
+
+  .q-message-container {
+  }
+}
+
 .zeebot-init {
   text-align: center;
   margin-left: 15px;

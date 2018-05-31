@@ -58,6 +58,7 @@ module.exports = function (ctx) {
         'QScrollArea',
         'QInput',
         'QItemSeparator',
+        'QSpinnerDots',
       ],
       directives: ['Ripple'],
       // Quasar plugins
