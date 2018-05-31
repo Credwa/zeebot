@@ -49,7 +49,6 @@ export default {
 }
 
 .customMessage {
-  padding: 16px;
   display: inline-block;
   font-family: Montserrat;
   margin-top: 3vh;
@@ -94,7 +93,7 @@ export default {
   .stamp {
     font-family: Montserrat;
     font-style: normal;
-    padding-left: 16px;
+    padding-left: 10px;
     font-weight: 500;
     margin-bottom: -2vh;
     font-size: 12px;
@@ -117,13 +116,13 @@ export default {
     content: "";
     display: block;
     position: absolute;
-    transform-origin: -50% 0%;
+    transform-origin: -10% 0%;
     -webkit-transform: rotate(270deg) skew(-25deg) translateY(16.6666666667px) !important;
     transform: rotate(270deg) skew(-25deg) translateY(16.6666666667px) !important;
   }
 
   .lines-group {
-    padding: 16px;
+    padding: 10px;
     max-height: 0;
     opacity: 0;
     animation: load-text 1s;

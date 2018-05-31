@@ -166,11 +166,14 @@ i.q-icon.q-if-control.material-icons {
 .q-message-stamp {
   margin-top: 0px !important;
   margin-bottom: 0px !important;
-  padding-bottom: 0px !important;
-  padding-top: 8px !important;
+  padding-top: 5px !important;
 }
 
 .q-message-text-content {
   padding: 0px !important;
+}
+
+.q-message-text {
+  padding: 16px;
 }
 </style>
